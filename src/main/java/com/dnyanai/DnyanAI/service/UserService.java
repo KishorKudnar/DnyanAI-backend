@@ -23,7 +23,10 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
-    public String registerUser(String name, String email, String password, String className, String stream, String board) {
+    private static final String FROM_EMAIL = "9c75ef001@smtp-brevo.com";
+
+    public String registerUser(String name, String email, String password, String className, String stream,
+            String board) {
         if (userRepository.findByEmail(email).isPresent()) {
             return "Email already registered!";
         }
@@ -42,6 +45,7 @@ public class UserService {
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(FROM_EMAIL);
             message.setTo(email);
             message.setSubject("Welcome to DnyanAI!");
             message.setText("Hello " + name + ",\n\nWelcome to DnyanAI!\n\nBest Regards,\nDnyanAI Team");
@@ -62,7 +66,8 @@ public class UserService {
         return Optional.empty();
     }
 
-    public String updateUserProfile(String email, String name, String className, String stream, String board, String profilePic) {
+    public String updateUserProfile(String email, String name, String className, String stream, String board,
+            String profilePic) {
         System.out.println("🟣 Updating full profile for email: " + email);
 
         Optional<User> optionalUser = userRepository.findByEmail(email.trim());
@@ -98,17 +103,24 @@ public class UserService {
             return "Email not registered!";
         }
 
-        String resetLink = "http://10.184.187.146:8080/reset-password?email=" + email;
+        String resetLink = "https://dnyanai-backend-1.onrender.com/reset-password?email=" + email;
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(FROM_EMAIL);
             message.setTo(email);
             message.setSubject("Password Reset Request");
-            message.setText("Hello " + userOpt.get().getName() + ",\n\n"
-                    + "Click below to reset your password:\n" + resetLink
-                    + "\n\nIf you didn't request this, ignore this email.\n\nBest Regards,\nDnyanAI Team");
+
+            message.setText(
+                    "Hello " + userOpt.get().getName() + ",\n\n"
+                            + "Click below to reset your password:\n"
+                            + resetLink + "\n\n"
+                            + "If you didn't request this, please ignore this email.\n\n"
+                            + "Best Regards,\n"
+                            + "DnyanAI Team");
 
             mailSender.send(message);
+
             return "Password reset link sent to your registered email!";
         } catch (Exception e) {
             e.printStackTrace();
