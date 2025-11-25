@@ -107,24 +107,21 @@ public class UserService {
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(FROM_EMAIL);
+            message.setFrom("noreply@dnyanai.com"); // Use any sender name (Brevo allows custom)
             message.setTo(email);
-            message.setSubject("Password Reset Request");
-
-            message.setText(
-                    "Hello " + userOpt.get().getName() + ",\n\n"
-                            + "Click below to reset your password:\n"
-                            + resetLink + "\n\n"
-                            + "If you didn't request this, please ignore this email.\n\n"
-                            + "Best Regards,\n"
-                            + "DnyanAI Team");
+            message.setSubject("DnyanAI - Password Reset");
+            message.setText("Hello " + userOpt.get().getName() + ",\n\n"
+                    + "Click the link below to reset your password:\n"
+                    + resetLink + "\n\n"
+                    + "If you did not request this, please ignore this email.\n\n"
+                    + "Regards,\nDnyanAI Team");
 
             mailSender.send(message);
 
             return "Password reset link sent to your registered email!";
         } catch (Exception e) {
             e.printStackTrace();
-            return "Failed to send email. Please try again later.";
+            return "Failed to send email. " + e.getMessage();
         }
     }
 
