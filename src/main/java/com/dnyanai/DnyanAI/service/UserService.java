@@ -23,7 +23,7 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
-    private static final String FROM_EMAIL = "9c75ef001@smtp-brevo.com";
+    private static final String FROM_EMAIL = "no-reply@test-zzk54v8v1pxljy6v.mlsender.net";
 
     public String registerUser(String name, String email, String password, String className, String stream,
             String board) {
@@ -107,17 +107,17 @@ public class UserService {
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("noreply@dnyanai.com"); // Use any sender name (Brevo allows custom)
+            message.setFrom(FROM_EMAIL);
             message.setTo(email);
             message.setSubject("DnyanAI - Password Reset");
-            message.setText("Hello " + userOpt.get().getName() + ",\n\n"
-                    + "Click the link below to reset your password:\n"
-                    + resetLink + "\n\n"
-                    + "If you did not request this, please ignore this email.\n\n"
-                    + "Regards,\nDnyanAI Team");
-
+            message.setText(
+                    "Hello " + userOpt.get().getName() + ",\n\n" +
+                            "Click the link below to reset your password:\n" +
+                            resetLink + "\n\n" +
+                            "If you did not request this, please ignore this email.\n\n" +
+                            "Regards,\nDnyanAI Team");
             mailSender.send(message);
-
+            
             return "Password reset link sent to your registered email!";
         } catch (Exception e) {
             e.printStackTrace();
